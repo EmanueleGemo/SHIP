@@ -902,12 +902,13 @@ class network(core):
                     pass
             # we add a small number, eps, to the delays, to avoid issues with 
             # zero-valued delays
+            delaysTS = tensor(delaysTS)
             above0 = delaysTS[delaysTS>0]
             if len(above0):
                 eps = min(delaysTS[delaysTS>0])/(len(above0)+1)
             else:
                 eps = 1
-            delaysTS = eps+tensor(delaysTS)
+            delaysTS = eps+delaysTS
             # now building a bool matrix tracking all combinations of the pair 
             # swaps
             bits = len(delaysTS)            

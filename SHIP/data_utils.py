@@ -15,9 +15,9 @@ from torch import (is_tensor,
                    zeros,
                    ones,
                    inf,
-                   zeros_like,
-                   sparse_coo_tensor,
-                   cat,
+                   # zeros_like,
+                   # sparse_coo_tensor,
+                   # cat,
                    where,
                    logical_and,
                    rand)
@@ -489,7 +489,7 @@ def TorchVisionDataLoader(dset:str = "MNIST",
         xtrain = xtrain.float().div(peak).reshape(xtrain.shape[0],-1)
         xtest = xtest.float().div(peak).reshape(xtest.shape[0],-1)
     
-    if labels:
+    if labels != []:
         mask_test = zeros((len(labels),xtest.shape[0]),dtype = bool)
         for ii in range(len(labels)):
             mask_test[ii,:] = ytest == labels[ii]
@@ -556,7 +556,7 @@ def linI(x, min_rate = 0, max_rate = 100, thr=0.2):
     out[x<=thr] = min_rate
     return out
 
-def TTFSencoding(x,nts,dt,preprocess = logI,jitter = zeros,seed:int = [],**kwargs):
+def TTFSencoder(x,nts,dt,preprocess = logI,jitter = zeros,seed:int = [],**kwargs):
     """
     This function converts an x tensor (float, 0..1 values) of absolute 
     intensity values, of size [samples-units], to a dense tensor of size 
@@ -598,11 +598,11 @@ def TTFSencoding(x,nts,dt,preprocess = logI,jitter = zeros,seed:int = [],**kwarg
     mask = logical_and(TTFS>=0,TTFS<nts)
     b,u = where(mask)
     t = TTFS[mask]
-    out = zeros(x.shape[0],nts,x.shape[1])
+    out = zeros(x.shape[0],nts+1,x.shape[1])
     out[b,t,u] = True
     return out[:,:-1,:]
   
-def Rencoding(x,nts,dt,preprocess = linI,seed: int = [],**kwargs):
+def Rencoder(x,nts,dt,preprocess = linI,seed: int = [],**kwargs):
     """
     Fast utility that converts an x tensor (float, 0..1 values) of absolute 
     intensity values, of size [samples-units], to a dense tensor of size 
@@ -639,7 +639,7 @@ def Rencoding(x,nts,dt,preprocess = linI,seed: int = [],**kwargs):
     out = rand(x.shape[0],nts,x.shape[1])<(R*dt).unsqueeze(1)
     return out
 
-# def ISIencoding(x,nts,dt, preprocess = linI, jitter = zeros, 
+# def ISIencoder(x,nts,dt, preprocess = linI, jitter = zeros, 
 #                 randomize_first:bool = True, burst_spike_cap:int = [], 
 #                 seed: int = [],**kwargs): <-- TODO - complete
 #     """

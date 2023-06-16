@@ -5,7 +5,8 @@ Created on Tue Jun 13 17:50:34 2023
 @author: Em
 """
 from torch import (zeros_like,
-                   abs as t_abs)
+                   abs as t_abs,
+                   no_grad)
 from torch.optim import Adam
 from torch.nn import (LogSoftmax,
                       NLLLoss)
@@ -25,6 +26,9 @@ class trainer():
         post -> postprocessing function, merely a placeholder in case it is needed
     The run method iteratively performs get_inference_data, calculate_apply_dw,
     and post.
+    For sake of conveniency we also add a get_prediction method that rapidly finds
+    the classificator prediction based on a inference result and the corresponding
+    labels (might not be universally-applicable)
     """
     
     def __init__(self,net,*args,**kwargs):
@@ -38,6 +42,9 @@ class trainer():
         pass
     def get_inference_data(self,*args,**kwargs):
         pass
+    def get_prediction(self): # generic implementation
+        with no_grad():
+            return self.get_inference_data().argmax(dim = 1).long()
     def post(self, *args, **kwargs):
         pass    
     

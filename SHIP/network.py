@@ -66,7 +66,7 @@ class network(core):
         # groups will be stored here
         # self.groups = Dict() # redundant?
         # self.__dict__ = self.groups # allows to seek the network groups via dot notation - LOG to be changed, does not work as intended
-        # self.groups.clear() # fixes issue by which any new object instance would remember any previous one
+        self.groups.clear() # fixes issue by which any new object instance would remember any previous one
         
     def save(self,filename):
         """

@@ -65,7 +65,8 @@ def refractory(parentclass):
     "integrate" to track the non-integrating time.
     It adds a "refr_time" parameter, upon which the neuron determines how much
     time needs to pass after spiking, before starting to integrate once more.
-
+    CAREFUL - not properly working with PyTorch training - need to debug.
+              use refractory_variabletimestep instead
 
     Parameters
     ----------
@@ -201,7 +202,7 @@ def refr_variabletimestep_advance_timestep(self,local_input):
         
     spikes = super(self.__class__, self).advance_timestep(local_input)
     
-    self.refractive_time[spikes] = self.on_spike[spikes] 
+    self.refractive_time[spikes.detach().bool()] = self.on_spike[spikes.detach().bool()] 
     self.integrate = self.refractive_time<=0
     self.refractive_time[~self.integrate] = self.refractive_time[~self.integrate]-self.dt
     

@@ -18,6 +18,7 @@ class core:
     nts = 1
     dt = 1
     device = get_device()
+    dt_sequence = None
     
     @classmethod
     def timeline(self,lim = None):
@@ -38,10 +39,17 @@ class core:
             (or lim) timestep.
 
         """
-        if lim and lim<self.nts:
-            return arange(lim)*self.dt
+        if self.dt_sequence is not None:
+            end = self.dt_sequence.numel()
+            if lim and lim<end:
+                end = lim
+            return self.dt_sequence[:end].cumsum(0)
         else:
-            return arange(self.nts)*self.dt
+            if lim and lim<self.nts:
+                end = lim
+            else:
+                end = self.nts                    
+                return arange(end)*self.dt
         
     def sethidden(self,attr,val):
         setattr('_'+self.__class__.__name__+attr,val)

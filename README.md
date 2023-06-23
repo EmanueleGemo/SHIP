@@ -18,7 +18,10 @@ Eventually, the user can perform inference, optionally providing input data.
 
 Also, the user can set-up a trainer object, which takes care of interfacing the network object in SHIP with the PyTorch training algorithms.
 
-A few utilities are also provided to facilitate provision, conversion and handling of datasets.
+A few utilities are also provided to facilitate download, conversion and handling of datasets.
 
 ## Citation
 A manuscript preparation is underway, by the provisional title of "Challenges and solutions for the emulation of silicon spiking neural network systems" from Emanuele Gemo, Sabina Spiga, and Stefano Brivio. The target journal is Frontiers In Neuroscience.
+
+## Funding
+This work has been funded by the MeM-Scales research project (https://memscales.eu, Horizon2020 grant agreement no. 871371)

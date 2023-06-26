@@ -1,5 +1,8 @@
 # SHIP
-_Spiking (neural network) Hardware In PyTorch_ is an emulation platform intended for hardware-based SNNs, based on compact models to mimic the behavior and functionalitites of the SNN components, and reliant on a PyTorch backend, so to exploit its available conventional machine-learning techniques.
+_Spiking (neural network) Hardware In PyTorch_ is an emulation platform intended for hardware-based SNNs, based on compact models to mimic the behavior and functionalitites of the SNN components, and reliant on a PyTorch backend, so to exploit its available conventional machine-learning techniques. 
+
+The development of SHIP has been carried out in CNR-IMM by Emanuele Gemo, Stefano Brivio, Sabina Spiga. This work has been funded by the MeM-Scales research project (https://memscales.eu, Horizon2020 grant agreement no. 871371)
+
 
 ## Platform description 
 The models are constructed as a set of time-discrete equations, each applicable to a _group_, i.e. set of hierarchically-identical components of the SNN (neurons and synapses; but also, optionally, learning rule circuit blocks, dendritic integrators, etc.). An easy-to-amend model scaffold is provided, to facilitate the building step of bespoke models.
@@ -22,6 +25,3 @@ A few utilities are also provided to facilitate download, conversion and handlin
 
 ## Citation
 A manuscript preparation is underway, by the provisional title of "Challenges and solutions for the emulation of silicon spiking neural network systems" from Emanuele Gemo, Sabina Spiga, and Stefano Brivio. The target journal is Frontiers In Neuroscience.
-
-## Funding
-This work has been funded by the MeM-Scales research project (https://memscales.eu, Horizon2020 grant agreement no. 871371)

@@ -14,14 +14,17 @@ The group models are all called sequentially during each time-step. The sequence
 We note that recurrent networks can be defined in SHIP with the same models used for feedforward network, with no added complexity.
 
 ## Interface 
-The interface is minimal, yet naturally readable. Network building starts with the instation of an "empty" network. The user can then add the group models, eventually providing both the configurational parameters for each group, and the group's sources and targets. The latter defines the network structure.
+The interface is minimal, yet naturally readable. Network building starts with the instation of an "empty" `network`. The user can then add the group models, eventually providing both the configurational parameters for each group, and the group's sources and targets. The latter defines the network structure.
 
-The user would then initialize the network, so to consolidate the network object and its inner clockwork.
+The user would then need to initialize the 'network', so to consolidate the object and its inner clockwork.
 Eventually, the user can perform inference, optionally providing input data.
 
-Also, the user can set-up a trainer object, which takes care of interfacing the network object in SHIP with the PyTorch training algorithms.
+Also, the user can set-up a `trainer` object, which takes care of interfacing the network object in SHIP with the PyTorch training algorithms.
 
 A few utilities are also provided to facilitate download, conversion and handling of datasets.
+
+## Dependencies
+As of now, the main dependency is `torch`. However, SHIP also uses some of the `matplotlib` and `os` class/functions.
 
 ## Citation
 A manuscript preparation is underway, by the provisional title of "Challenges and solutions for the emulation of silicon spiking neural network systems" from Emanuele Gemo, Sabina Spiga, and Stefano Brivio. The target journal is Frontiers In Neuroscience.

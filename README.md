@@ -24,7 +24,7 @@ Also, the user can set-up a `trainer` object, which takes care of interfacing th
 A few utilities are also provided to facilitate download, conversion and handling of datasets.
 
 ## Dependencies
-As of now, the main dependency is `torch`. However, SHIP also uses some of the `matplotlib` and `os` class/functions.
+As of now, the main dependency is `torch`. However, SHIP also uses some of the `matplotlib`, `os` and `sys` class/functions.
 
 ## Citation
 A manuscript preparation is underway, by the provisional title of "Challenges and solutions for the emulation of silicon spiking neural network systems" from Emanuele Gemo, Sabina Spiga, and Stefano Brivio. The target journal is Frontiers In Neuroscience.

@@ -8,7 +8,8 @@ Created on Tue Mar 14 12:06:13 2023
 
 from .component_utils import (refractory,
                               refractory_variabletimestep,
-                              delayed)
+                              delayed,
+                              WinnerTakeAll)
 from .component_models import (inputN,
                                list_inputN,
                                poissonN,
@@ -30,6 +31,7 @@ from .data_utils import (TorchVisionDataLoader,
 from .core import core
 from .network import network
 from .utils import Dict,uniform_dist
+from .group import group,neurongroup,synapsegroup
 
 
 
@@ -38,24 +40,32 @@ __all__ = [### essentials
            "core",
            "network",
            
-           ### datatype or function utils
+           ### group classes #XXX might remove these ones form all?
+           "group",
+           "neurongroup",
+           "synapsegroup",
+           
+           ### datatype or utils
            "Dict",
            "uniform_dist",
+           
            
            ### data_utils
            "TorchVisionDataLoader",
            "TensorHauler",
            "ListHauler",
            "ListHaulerMS",
-           "TTFSencoding",
-           "Rencoding",
-           "ISIencoding",
+           "TTFSencoder",
+           "Rencoder",
+           # "ISIencoder", #TODO
+           
            
            
            ### model wrappers adding functionalities
            "refractory",
-           "refractory_variabletimestep", # <- to be merged
+           "refractory_variabletimestep", #<- #TODO: to be merged
            "delayed",
+           "WinnerTakeAll",
            
            ### training 
            "trainer",

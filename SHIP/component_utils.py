@@ -5,17 +5,19 @@ Created on Thu Jun  8 15:45:24 2023
 @author: Em
 """
 
-from torch import (where,
+from torch import (#where,
                    zeros_like,
                    tensor,
                    exp,
                    ones,
                    zeros,
                    is_tensor,
-                   stack,
-                   arange,
-                   abs as t_abs,
-                   autograd)
+                   #stack,
+                   #arange,
+                   #abs as t_abs,
+                   #autograd,
+                   no_grad,
+                   logical_and)
 
 
 ##############################################################################
@@ -278,5 +280,37 @@ def latency_advance_timestep(self,local_input):
 #     self.delayed_output.append( super(self.__class__, self).advance_timestep(local_input) )
 #     return self.delayed_output.pop(0)
 
+##############################################################################
+# winner-take-all utility for neurons
 
+def WinnerTakeAll(parentclass):
+    """
+    This superclass applies the winner-take-all functionality to a neurongroup
+    Each time a neuron of the neurongroup spikes, the membrane potential of 
+    all the neurons in the group is reset (in the following timestep).
+
+    Parameters
+    ----------
+    parentclass : neurongroup model
+
+    Returns
+    -------
+    childclass : WTA_neurongroup model
+
+    """
+    tag = "WTA_"+parentclass.__name__
+    kwargs = {"dynamic_class":True,
+              "advance_timestep":WTA_advance_timestep}
+    childclass = type(tag,(parentclass,),kwargs)
+    return childclass
+
+# @classmethod
+def WTA_advance_timestep(self,local_input):
+    output = super(self.__class__, self).advance_timestep(local_input)    
+    with no_grad(): # TODO: experimental - might need to review this one
+        toreset = output.any(dim=1)
+        if toreset.any():
+            self.integrate = logical_and(self.integrate,
+                                         (~toreset).unsqueeze(-1).expand(self.batch_size,self.N))
+    return output
     

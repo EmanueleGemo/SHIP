@@ -28,8 +28,8 @@ class standard_model_scaffold(neurongroup,synapsegroup):
     This class is here solely to serve as a reference for further developments.
     """
     
-    variable = {'name_of_the_variable': "default_value"}
-    parameter = {'_CanAlsoUseUnderscoresAndFunctions__': rand}
+    variables = {'name_of_the_variable': "default_value"}
+    parameters = {'_CanAlsoUseUnderscoresAndFunctions__': rand}
     
     def timedep(self):
         """
@@ -242,7 +242,7 @@ class lifN(neurongroup):
         self.integrate = ones(self.u.shape,dtype = bool)# ~self.activator(self.u-self.thr).detach().bool()
     
     def advance_timestep(self,local_input=0):
-        self.u = (self.integrate)*clamp(self.u*self.beta+local_input,min=0)
+        self.u = self.integrate*clamp(self.u*self.beta+local_input,min=0)
         spikes = self.activator(self.u-self.thr)
         self.integrate = ~spikes.detach().bool() 
         return spikes
@@ -259,7 +259,7 @@ class lifN_b(lifN):
                   'tau_beta_': 1e-3} # temporal constant [s]
 
     def advance_timestep(self,local_input=0):
-        self.u = self.u0+ (self.integrate)*clamp((self.u-self.u0)*self.beta+local_input,min=0)
+        self.u = self.u0+ self.integrate*clamp((self.u-self.u0)*self.beta+local_input,min=0)
         spikes = self.activator(self.u-self.thr)
         self.integrate = ~spikes.detach().bool() # <-- refractory init
         return spikes
@@ -279,15 +279,15 @@ class lifN_c(lifN):
         self.thr_u0 = self.thr-self.u0
         
     def advance_timestep(self,local_input=0):
-        self.du = clamp(self.du*self.beta+self.integrate*local_input,min=0)
+        self.du = self.integrate*clamp(self.du*self.beta+local_input,min=0)
         spikes = self.activator(self.du-self.thr_u0)
         self.integrate = ~spikes.detach().bool()
-        self.du[spikes.detach().bool()] = 0
+        # self.u = self.du*self.integrate+self.u0 <- deleted, only cosmetic
         self.u = self.du+self.u0
         return spikes
 
 ###############################################################################
-### input - autonomous models
+### input/autonomous models
 
 class inputN(neurongroup):
     """

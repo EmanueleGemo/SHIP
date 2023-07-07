@@ -780,6 +780,26 @@ class neurongroup(group):
         if 'N' in kwargs.keys(): # should always be?
             self.Ns = self.N
             self.Nt = self.N
+    
+    # def reset(self,batch_unit): <- under evaluation
+    #     """
+    #     Provisional method that would be dedicated to the neuron reset operation
+    #     It is an optional method. One can implement the operation within the 
+    #     advance_timestep method, or it can use this one
+    #     It should reset the membrane potential of the neurons listed in the 
+    #     batch_unit boolean tensor
+        
+    #     Parameters
+    #     ----------
+    #     batch_unit : bool torch.tensor
+    #         map of the neurons that needs resetting.
+
+    #     Returns
+    #     -------
+    #     None.
+
+    #     """
+    #     pass
 
 class synapsegroup(group):
     """

@@ -352,6 +352,7 @@ class network(core):
         self.init_groups(**kwargs)
         self.init_network_structure()
         self.init_output_indices(out)
+        core.dt_sequence = None
         # self.assign_groups_step_function()
     
     def init_groups(self,**kwargs):

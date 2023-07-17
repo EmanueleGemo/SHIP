@@ -27,4 +27,4 @@ A few utilities are also provided to facilitate download, conversion and handlin
 As of now, the main dependency is `torch`. However, SHIP also uses some of the `matplotlib`, `os` and `sys` class/functions.
 
 ## Citation
-A manuscript preparation is underway, by the provisional title of "Challenges and solutions for the emulation of silicon spiking neural network systems" from Emanuele Gemo, Sabina Spiga, and Stefano Brivio. The target journal is Frontiers In Neuroscience.
+E. Gemo, S. Spiga, and S. Brivio. "SHIP: a computational framework for simulating and validating novel technologies in hardware spiking neural networks", *Front. Neurosci.*, 2023, submitted.

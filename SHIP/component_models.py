@@ -259,7 +259,7 @@ class lifN_b(lifN):
                   'tau_beta_': 1e-3} # temporal constant [s]
 
     def advance_timestep(self,local_input=0):
-        self.u = self.u0+ self.integrate*clamp((self.u-self.u0)*self.beta+local_input,min=0)
+        self.u = self.u0+ self.integrate*clamp((self.u-self.u0)*self.beta+local_input,min=-self.u0)
         spikes = self.activator(self.u-self.thr)
         self.integrate = ~spikes.detach().bool() # <-- refractory init
         return spikes
@@ -279,7 +279,7 @@ class lifN_c(lifN):
         self.thr_u0 = self.thr-self.u0
         
     def advance_timestep(self,local_input=0):
-        self.du = self.integrate*clamp(self.du*self.beta+local_input,min=0)
+        self.du = self.integrate*clamp(self.du*self.beta+local_input,min=-self.u0)
         spikes = self.activator(self.du-self.thr_u0)
         self.integrate = ~spikes.detach().bool()
         # self.u = self.du*self.integrate+self.u0 <- deleted, only cosmetic

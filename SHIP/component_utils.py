@@ -105,12 +105,12 @@ def refr_time_dep(self):
     if r.dim() == 0:
         r = ones(self.batch_size,self.N)*r
     elif r.dim() == 1:
-        if r.shape == self.N:
+        if r.numel() == self.N:
             r = r.unsqueeze(0).expand([self.batch_size,self.N])
-        elif r.shape == self.batch_size:
+        elif r.numel() == self.batch_size:
             r = r.unsqueeze(1).expand([self.batch_size,self.N])
         else:
-            raise Exception('please check refr_time tensor'' shape in %s class'%self.tag) # LOG - algorithm should never enter here, 
+            raise Exception('STOPPING ISSUE - check the shape of tensor refr_time in %s class'%self.tag) # LOG - algorithm should never enter here, 
     self.refr_steps = (r.div(self.dt)).round().int()
     self.refr_max_steps = self.refr_steps.max().item()
     self.refr_table = ones([self.refr_max_steps,self.batch_size,self.N],dtype = bool)

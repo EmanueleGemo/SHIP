@@ -320,7 +320,7 @@ class list_inputN(inputN):
     parameters = {'adaptive_nts': True}
 
     # simply transfers the input to the output, provided in a args[0] form
-    def set_initial_state(self,*args):
+    def set_initial_state(self,*args,**kwargs):
         # using this function just to store the argument
         
         tt = [len(aa) for aa in args[0]]  

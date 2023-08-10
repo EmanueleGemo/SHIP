@@ -238,7 +238,7 @@ class lifN(neurongroup):
     # def time_dep(self): <- alternative statement method
     #     LIF_time_dep(self)
     
-    def set_initial_state(self,*args):        
+    def set_initial_state(self,*args,**kwargs):        
         self.integrate = ones(self.u.shape,dtype = bool)# ~self.activator(self.u-self.thr).detach().bool()
     
     def advance_timestep(self,local_input=0):
@@ -273,7 +273,7 @@ class lifN_c(lifN):
                   'ur': 0, # neuron reset membrane potential; 
                   'thr': 1, # threshold potential - the neuron fires once u overcomes its value
                   'tau_beta_': 1e-3} # temporal constant [s]
-    def set_initial_state(self,*args):        
+    def set_initial_state(self,*args,**kwargs):        
         self.integrate = ones(self.u.shape,dtype = bool)
         self.du = self.u-self.u0
         self.thr_u0 = self.thr-self.u0

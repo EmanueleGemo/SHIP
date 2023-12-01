@@ -39,6 +39,7 @@ batch_size = 16
 
 dataset_fname = "spokendigit.pickle"
 backup_dsetfname = "justgetthesamples.pic"
+backup_encodeddsetfname = "dset4quant.pic" # for the following quantization task
 
 ### lyon model and spike generation parameters
 Lyon_params = {'sample_rate':8000,#Hz
@@ -96,9 +97,12 @@ net = build_conversion_net(NI,NR,
                            wI = wI,
                            dt = 0.001, nts = 300, batch_size = batch_size)
 x,y = reservoir_spikes(net,spks,labels,batch_size = batch_size)      
-xtest,ytest,xtrain,ytrain,test_indices = select_traintestdata(x,y,
-                                                              train_percentage,
-                                                              seed = 2000)
+(xtest,ytest,
+ xtrain,ytrain,
+ test_indices) = select_traintestdata(x,y,
+                                      train_percentage,
+                                      seed = 2000,
+                                      dsetfname = backup_encodeddsetfname)
 
 
 ##### train network ###########################################################

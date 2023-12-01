@@ -102,7 +102,10 @@ def get_spiking_input(dataset_fname,Lyon_params,deltaencoder_params,backup_dsetf
     
     return spks,labels
 
-def select_traintestdata(x,y, train_fraction = 0.85, test_idx = None, seed = 0):
+def select_traintestdata(x,y, train_fraction = 0.85, 
+                         test_idx = None, 
+                         dsetfname = None,
+                         seed = 0):
     
     manual_seed(seed)    
     if test_idx is None:
@@ -130,7 +133,11 @@ def select_traintestdata(x,y, train_fraction = 0.85, test_idx = None, seed = 0):
         xtest = [x[int(test_idx[_].item())][:,:] for _ in range(len(test_idx))]
         
     ytrain = stack([y[int(train_idx[_].item())] for _ in range(len(train_idx))],0).long()
-    ytest = stack([y[int(test_idx[_].item())] for _ in range(len(test_idx))],0).long()       
+    ytest = stack([y[int(test_idx[_].item())] for _ in range(len(test_idx))],0).long()   
+
+    if dsetfname: # here we save the encoded dataset for future use
+        with open(dsetfname, "wb") as h:
+            pickle.dump((xtest,ytest,xtrain,ytrain,test_idx),h)
     return xtest,ytest,xtrain,ytrain, test_idx
 
 # network building
@@ -215,17 +222,19 @@ def build_conversion_net(NI,NR,thrR,tbR,refr_timeR,taI,taE,phiRR,delay_timeRR,ph
     return snn
 
 
-def build_trainable_net(NR,NO,tbO,taRO,phiRO,seed = None,
+def build_trainable_net(NR,NO,tbO,taRO,phiRO,
+                        s_model = lS_1o, w = None, seed = None,
                         dt = 0.001, nts = 300, batch_size = 16):
     
     if seed:
-        manual_seed(seed)        
-    w = 1-2*rand(NR,NO)
+        manual_seed(seed)     
+    if w is None:
+        w = 1-2*rand(NR,NO) # uniform dist
 
     snn = network()
     snn.add(list_inputN,'i', N = NR)
     snn.add(liN,'o',N=NO, tau_beta = tbO, is_output = True)
-    snn.add(lS_1o,'io',source = 'i',target = 'o', 
+    snn.add(s_model,'io',source = 'i',target = 'o', 
             tau_alpha = taRO, 
             w_scale = phiRO,
             w = w)

@@ -90,6 +90,30 @@ class standard_model_scaffold(neurongroup,synapsegroup):
 ###############################################################################
 ### synapse models (here, input integration is also performed)
 
+class linkS(synapsegroup):
+    """
+    set of ideal wire connections, meant to connect 1-to-1 
+    source to target without applying any weight
+    """
+    def get_N(self):
+        return self.Nt 
+    def advance_timestep(self,local_input = zeros(1)):
+        return local_input
+    
+class wireS(synapsegroup):
+    """
+    attempt to introduce the torch.nn.linear functionality with an ad-hoc model
+    no scaling factor is applied
+    """
+    variables = {} # stateless
+    parameters = {'bias': 0, # bias value added to the input
+                  'w__': rand} # synaptic weight; no w_scale here
+                  # 'w_scale': 1} # scaling factor not implemented here
+    def get_N(self):
+        return self.Nt 
+    def advance_timestep(self,local_input = zeros(1)):
+        return local_input.matmul(self.w)+self.bias#einsum("bi,io->bo",local_input,self.w) + self.bias.
+
 class lS_1o(synapsegroup):
     """
     1st order leaky synapse model, in which the synaptic current immediately 
@@ -230,7 +254,7 @@ class lifN(neurongroup):
     
     variables = {'_u_': 0} # membrane potential <-- internal state
     parameters = {'thr': 1, # threshold potential - the neuron fires once u overcomes its value
-                  'tau_beta_': 1e-3} # temporal constant [s]
+                  'tau_beta_': 10e-3} # temporal constant [s]
     
     # quickly set some of the required functions:
     activator = quick_activator
@@ -300,7 +324,7 @@ class inputN(neurongroup):
     parameters = {}
 
     # simply transfers the input to the output, provided in a args[0] form
-    def set_initial_state(self,*args):
+    def set_initial_state(self,*args,**kwargs):
         # using this function just to store the argument
         self.input = args[0]
         self.__t = -1                    

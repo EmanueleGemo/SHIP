@@ -105,12 +105,12 @@ def refr_time_dep(self):
     if r.dim() == 0:
         r = ones(self.batch_size,self.N)*r
     elif r.dim() == 1:
-        if r.numel() == self.N:
+        if r.shape == self.N:
             r = r.unsqueeze(0).expand([self.batch_size,self.N])
-        elif r.numel() == self.batch_size:
+        elif r.shape == self.batch_size:
             r = r.unsqueeze(1).expand([self.batch_size,self.N])
         else:
-            raise Exception('STOPPING ISSUE - check the shape of tensor refr_time in %s class'%self.tag) # LOG - algorithm should never enter here, 
+            raise Exception('please check refr_time tensor'' shape in %s class'%self.tag) # LOG - algorithm should never enter here, 
     self.refr_steps = (r.div(self.dt)).round().int()
     self.refr_max_steps = self.refr_steps.max().item()
     self.refr_table = ones([self.refr_max_steps,self.batch_size,self.N],dtype = bool)
@@ -184,9 +184,9 @@ def refr_variabletimestep_time_dep(self):
     if r.dim() == 0:
         r = ones(self.batch_size,self.N)*r
     elif r.dim() == 1:
-        if r.shape == self.N:
+        if r.numel() == self.N:
             r = r.unsqueeze(0).expand([self.batch_size,self.N])
-        elif r.shape == self.batch_size:
+        elif r.numel() == self.batch_size:
             r = r.unsqueeze(1).expand([self.batch_size,self.N])
         else:
             raise Exception('please check refr_time tensor'' shape in %s class'%self.tag) # LOG - algorithm should never enter here, 
@@ -312,5 +312,36 @@ def WTA_advance_timestep(self,local_input):
         if toreset.any():
             self.integrate = logical_and(self.integrate,
                                          (~toreset).unsqueeze(-1).expand(self.batch_size,self.N))
+    return output
+
+def WinnerTakeAllRefractory(parentclass):
+    """
+    This superclass copies what has been done with the WinnerTakeAll, and adds
+    another shared functionality - the refractoriness of the neurons, once one
+    fires. Refractoriness MUST be added via use of the refractory or 
+    refractory_variabletimestep superclasses, otherwise is not considered.
+
+    Parameters
+    ----------
+    parentclass : neurongroup model
+
+    Returns
+    -------
+    childclass : WTAR_neurongroup model
+
+    """
+    tag = "WTAR_"+parentclass.__name__
+    kwargs = {"dynamic_class":True,
+              "advance_timestep":WTAR_advance_timestep}
+    childclass = type(tag,(parentclass,),kwargs)
+    return childclass
+
+# @classmethod
+def WTAR_advance_timestep(self,local_input):
+    output = super(self.__class__, self).advance_timestep(local_input)    
+    with no_grad(): # TODO: experimental - might need to review this one
+        toreset = self.integrate.any()
+        if toreset:
+            self.integrate[:] = 0.            
     return output
     

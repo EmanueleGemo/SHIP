@@ -72,7 +72,7 @@ def TensorHauler(x, y, batch_size = [], max_batches = int(1e9),
     if not is_tensor(y): #labels datatype check
         y = tensor(y, device = device).long()
         
-    number_of_samples = len(x)
+    number_of_samples = len(y)
     number_of_batches = number_of_samples//core.batch_size ### <- no assertion on batch size
     
     if number_of_batches>max_batches:
@@ -183,10 +183,11 @@ def ListHauler(x_list, y, batch_size = [], nts = [], max_batches = int(1e9),
                     X[ii,:,:] = x_list[ii][:local_nts,:]     
                 else:
                     X[ii,:len_of_samples[ii],:] = x_list[ii][:,:]
+            X.to(device=device)
         else:
-            X = [x_list[_] for _ in idx[batch_indices]]
+            X = [tensor(x_list[_]).to(device=device) for _ in idx[batch_indices]]
             
-        yield X.to(device=device), y[idx[batch_indices]].to(device=device)
+        yield X, y[idx[batch_indices]].to(device=device)
         counter += 1
         
     other = number_of_samples%batch_size
@@ -204,10 +205,11 @@ def ListHauler(x_list, y, batch_size = [], nts = [], max_batches = int(1e9),
                     X[ii,:,:] = x_list[ii][:local_nts,:]     
                 else:
                     X[ii,:len_of_samples[ii],:] = x_list[ii][:,:]
+            X.to(device = device)
         else:
-            X = [x_list[_] for _ in idx[batch_indices]]
+            X = [tensor(x_list[_]).to(device=device) for _ in idx[batch_indices]]
             
-        yield X.to(device=device), y[idx[batch_indices]].to(device=device) # lists may not be loaded to gpu - need to check
+        yield X, y[idx[batch_indices]].to(device=device) # lists may not be loaded to gpu - need to check
         core.batch_size = tmp
         
 def ListHaulerMS(x_list, y, params, batch_size = [], nts = [], 
@@ -309,10 +311,11 @@ def ListHaulerMS(x_list, y, params, batch_size = [], nts = [],
                     X[ii,:,:] = x_list[ii][:local_nts,:]     
                 else:
                     X[ii,:len_of_samples[ii],:] = x_list[ii][:,:]
+            X.to(device=device)
         else:
-            X = [x_list[_] for _ in idx[batch_indices]]
+            X = [tensor(x_list[_]).to(device=device)  for _ in idx[batch_indices]]
             
-        yield X.to(device=device), y[idx[batch_indices]].to(device=device), P[idx[batch_indices]]
+        yield X, y[idx[batch_indices]].to(device=device), P[idx[batch_indices]]
         counter += 1
         
     other = number_of_samples%batch_size
@@ -330,10 +333,11 @@ def ListHaulerMS(x_list, y, params, batch_size = [], nts = [],
                     X[ii,:,:] = x_list[ii][:local_nts,:]     
                 else:
                     X[ii,:len_of_samples[ii],:] = x_list[ii][:,:]
+            X.to(device=device)
         else:
-            X = [x_list[_] for _ in idx[batch_indices]]
+            X = [tensor(x_list[_]).to(device=device) for _ in idx[batch_indices]]
             
-        yield X.to(device=device), y[idx[batch_indices]].to(device=device), P[idx[batch_indices]]
+        yield X, y[idx[batch_indices]].to(device=device), P[idx[batch_indices]]
         core.batch_size = tmp   
 
 
@@ -556,7 +560,7 @@ def linI(x, min_rate = 0, max_rate = 100, thr=0.2):
     out[x<=thr] = min_rate
     return out
 
-def TTFSencoder(x,nts,dt,preprocess = logI,jitter = zeros,seed:int = [],**kwargs):
+def TTFSencoder(x,lim,dt,preprocess = logI,jitter = zeros,seed:int = [],**kwargs):
     """
     This function converts an x tensor (float, 0..1 values) of absolute 
     intensity values, of size [samples-units], to a dense tensor of size 
@@ -570,8 +574,8 @@ def TTFSencoder(x,nts,dt,preprocess = logI,jitter = zeros,seed:int = [],**kwargs
     ----------
     x : tensor
         data to be converted (float), assumed of size[samples,units]
-    nts : int
-        number of time-steps.
+    lim : int
+        maximum number of time-steps.
     dt : float
         time-step size.
     preprocess : function, optional
@@ -594,12 +598,21 @@ def TTFSencoder(x,nts,dt,preprocess = logI,jitter = zeros,seed:int = [],**kwargs
     """
     if seed:
         manual_seed(seed)
-    TTFS = ((preprocess(x,**kwargs)+jitter(x.shape))/dt).long().clamp(min=-1,max=nts)
-    mask = logical_and(TTFS>=0,TTFS<nts)
-    b,u = where(mask)
-    t = TTFS[mask]
-    out = zeros(x.shape[0],nts+1,x.shape[1])
-    out[b,t,u] = True
+    TTFS = ((preprocess(x,**kwargs)+jitter(x.shape))/dt).long().clamp(min=-1,max=lim)
+    mask = logical_and(TTFS>=0,TTFS<lim)
+    if mask.dim == 2:
+        b,u = where(mask)
+        t = TTFS[mask]
+        out = zeros(x.shape[0],lim+1,x.shape[1])
+        out[b,t,u] = True
+    else:
+        wh = where(mask)
+        t = TTFS[mask]
+        out = zeros(x.shape[0],lim+1,*x.shape[1:],dtype = bool)
+        mask2 = list(wh)
+        mask2.insert(1,t)
+        mask2 = tuple(mask2)
+        out[mask2] = True
     return out[:,:-1,:]
   
 def Rencoder(x,nts,dt,preprocess = linI,seed: int = [],**kwargs):

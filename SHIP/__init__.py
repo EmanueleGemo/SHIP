@@ -9,7 +9,8 @@ Created on Tue Mar 14 12:06:13 2023
 from .component_utils import (refractory,
                               refractory_variabletimestep,
                               delayed,
-                              WinnerTakeAll)
+                              WinnerTakeAll,
+                              WinnerTakeAllRefractory)
 from .component_models import (inputN,
                                list_inputN,
                                poissonN,
@@ -19,7 +20,9 @@ from .component_models import (inputN,
                                liN,
                                lS_1o,
                                lS_2o,
-                               lS_FZenke) 
+                               lS_FZenke,
+                               wireS,
+                               linkS) 
 from .plastic_core import (trainer,
                            SurrGradTrainer)
 from .data_utils import (TorchVisionDataLoader,
@@ -33,8 +36,7 @@ from .network import network
 from .utils import Dict,uniform_dist
 from .group import group,neurongroup,synapsegroup
 
-
-
+__version__ = "0.02"
 
 __all__ = [### essentials
            "core",
@@ -66,6 +68,7 @@ __all__ = [### essentials
            "refractory_variabletimestep", #<- #TODO: to be merged
            "delayed",
            "WinnerTakeAll",
+           "WinnerTakeAllRefractory",
            
            ### training 
            "trainer",
@@ -81,4 +84,6 @@ __all__ = [### essentials
            "liN",
            "lS_1o",
            "lS_2o",
-           "lS_FZenke"]
+           "lS_FZenke",
+           "linkS",
+           "wireS"]

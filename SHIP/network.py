@@ -334,7 +334,16 @@ class network(core):
         None.
 
         """
-        
+        if 'time' in kwargs:
+           if 'dt' in kwargs and not 'nts' in kwargs:
+               kwargs['nts'] = int(kwargs['time']/kwargs['dt'])
+               del kwargs['time']
+           elif 'nts' in kwargs and not 'dt' in kwargs:
+               kwargs['dt'] = kwargs['time']/kwargs['nts']
+               del kwargs['time']
+           else:
+               raise('The keyword "time" has been provided, along with inconsistent (or no) information on the time-step size or number of time-steps. Execution stopped.')
+            
         if 'dt' in kwargs:
             core.dt = kwargs['dt']
             del kwargs['dt']
@@ -343,7 +352,9 @@ class network(core):
             del kwargs['batch_size']
         if 'nts' in kwargs:
             core.nts = kwargs['nts']
-            del kwargs['nts']    
+            del kwargs['nts']
+            
+        
         if 'output' in kwargs:
             out = kwargs['output'] 
         else:
@@ -669,7 +680,11 @@ class network(core):
                 # due to the local_input dynamically created variable
                 if gg.needs_1_input: # send one tensor
                     gg.output = gg.run_wrapper( self.res[gg.input_idx] )
-                elif gg.needs_more_inputs: # send sum of input tensors
+                elif gg.needs_more_inputs: # send sum of input tensors                
+                    # local = self.res[gg.input_idx[0]]
+                    # for kk in range(1,len(gg.input_idx)):
+                    #     local = local + self.res[gg.input_idx[kk]]
+                    # gg.output = gg.run_wrapper( local )
                     gg.output = gg.run_wrapper( sum([self.res[_] for _ in gg.input_idx]) )
                 else:
                     gg.output = gg.run_wrapper()

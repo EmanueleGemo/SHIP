@@ -1,18 +1,21 @@
-clear all %#ok<CLALL>
-clc
-%% this script summarizes the fit process of the experimental data shown in Fig 4 of 10.1002/aisy.202200145.#
+%% INTRO
+% This script summarizes the fit process of the experimental data shown 
+% in Fig 4 of 10.1002/aisy.202200145.
 % Fig1: datapoints represent the digitized data, solid lines are their linear fit (using a xlog scale), 
 % and the dashed lines represent the final model result.
 % Fig3: same as Fig 1
 % Fig2 and Fig4 show the fitting process
 % Fig 5 correlates the values of (\mu)0 and (\mu/\sigma)0
-
 % DataPoints:
-% Each datapoint digitizes the experimental data portion of the data
+% Each datapoint digitizes the experimental data portion of the plot.
 % there presented. A total of 4 points per dataset is collected.
 % the digitization collects the data sequentially, hence the unconventional
 % format that we need to process iteratively.
-% we assume lines fitting the data (plotted in xlog scale).
+% We assume that lines fit the data (plotted in xlog scale).
+
+%% GO
+clear all %#ok<CLALL>
+clc
 
 mean_raw_data = [
 58.37592378488597, 44.58077709611453

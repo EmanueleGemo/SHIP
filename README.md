@@ -27,4 +27,4 @@ A few utilities are also provided to facilitate download, conversion and handlin
 As of now, the main dependency is `torch`. However, SHIP also uses some of the `matplotlib`, `os` and `sys` classes/functions.
 
 ## Citation
-E. Gemo, S. Spiga, and S. Brivio. "SHIP: a computational framework for simulating and validating novel technologies in hardware spiking neural networks", *Front. Neurosci.*, 2023, submitted.
+E. Gemo, S. Spiga, and S. Brivio. "SHIP: a computational framework for simulating and validating novel technologies in hardware spiking neural networks", *Front. Neurosci.*, 2023, accepted.
